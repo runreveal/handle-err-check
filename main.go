@@ -12,7 +12,7 @@ import (
 
 var Analyzer = &analysis.Analyzer{
 	Name:     "handleerrorcheck",
-	Doc:      "Checks that HandleError is followed immediately by a return in HTTP Handlers",
+	Doc:      "Checks that HandleErr is followed immediately by a return in HTTP Handlers",
 	Requires: []*analysis.Analyzer{inspect.Analyzer},
 	Run:      run,
 }
@@ -46,12 +46,8 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		// fmt.Printf("%+v\n", stack[0])
 		// Check if the next statement in the block is not a return statement
 		if len(stack) < 3 {
-			fmt.Println("stack short")
 			return true
 		}
-
-		pos := pass.Fset.Position(n.Pos())
-		fmt.Printf("File: %s, Line: %d, Column: %d\n", pos.Filename, pos.Line, pos.Column)
 
 		// not sure what me represents, but it's above the ident
 		me := stack[len(stack)-2]
@@ -61,13 +57,10 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		if !ok {
 			return true
 		}
-		fmt.Println("isblock")
-		fmt.Printf("%+v\n", me)
 
 		for idx, stmt := range parentBlock.List {
-			fmt.Printf("%d, %+v\n", idx, stmt)
 			if stmt == me && (idx == len(parentBlock.List)-1 || !isReturnStmt(parentBlock.List[idx+1])) {
-				pass.Reportf(call.Pos(), "HandleError should be immediately followed by a return")
+				pass.Reportf(call.Pos(), "HandleErr should be immediately followed by a return")
 			}
 		}
 		return true
