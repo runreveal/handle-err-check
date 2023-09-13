@@ -1,6 +1,6 @@
 module github.com/runreveal/handle-err-check
 
-go 1.21.1
+go 1.21
 
 require (
 	golang.org/x/mod v0.12.0 // indirect
