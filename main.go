@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"go/ast"
 
 	"golang.org/x/tools/go/analysis"
@@ -19,17 +18,7 @@ var Analyzer = &analysis.Analyzer{
 
 func run(pass *analysis.Pass) (interface{}, error) {
 	inspector := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
-	// nodeFilter := []ast.Node{
-	// 	(*ast.CallExpr)(nil),
-	// 	(*ast.BlockStmt)(nil),
-	// 	(*ast.ReturnStmt)(nil),
-	// }
-
 	inspector.WithStack(nil, func(n ast.Node, push bool, stack []ast.Node) bool {
-		// We only care about CallExpr nodes for our logic
-		// if !push {
-		// 	return true
-		// }
 
 		call, ok := n.(*ast.CallExpr)
 		if !ok {
@@ -42,8 +31,6 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			return true
 		}
 
-		fmt.Println(ident.Name, len(stack))
-		// fmt.Printf("%+v\n", stack[0])
 		// Check if the next statement in the block is not a return statement
 		if len(stack) < 3 {
 			return true
@@ -52,7 +39,6 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		// not sure what me represents, but it's above the ident
 		me := stack[len(stack)-2]
 		blk := stack[len(stack)-3]
-		// fmt.Printf("%+v\n", blk)
 		parentBlock, ok := blk.(*ast.BlockStmt)
 		if !ok {
 			return true
