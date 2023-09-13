@@ -1,4 +1,4 @@
-module github.com/runreveal/http-error-plugin
+module github.com/runreveal/handle-err-check
 
 go 1.21.1
 
