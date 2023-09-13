@@ -45,7 +45,10 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		}
 
 		for idx, stmt := range parentBlock.List {
-			if stmt == me && (idx == len(parentBlock.List)-1 || !isReturnStmt(parentBlock.List[idx+1])) {
+			// if we're looking at the handleErr function,
+			// and it's not the last statement in the block,
+			// and the next statement is not a return statement
+			if stmt == me && idx != len(parentBlock.List)-1 && !isReturnStmt(parentBlock.List[idx+1]) {
 				pass.Reportf(call.Pos(), "HandleErr should be immediately followed by a return")
 			}
 		}
